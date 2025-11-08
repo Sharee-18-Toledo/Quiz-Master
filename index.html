@@ -7,7 +7,9 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      background: linear-gradient(-45deg, #6a11cb, #2575fc, #00c9ff, #92fe9d);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
       margin: 0;
       padding: 0;
       display: flex;
@@ -16,6 +18,7 @@
       height: 100vh;
       color: #333;
     }
+
     .quiz-container {
       background: #fff;
       padding: 30px;
@@ -25,18 +28,37 @@
       width: 90%;
       text-align: center;
       animation: fadeIn 1s ease-in-out;
+      position: relative;
+      z-index: 1;
     }
+
+    /* Soft glowing aura around the quiz box */
+    .quiz-container::before {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background: linear-gradient(135deg, rgba(106, 17, 203, 0.3), rgba(37, 117, 252, 0.3));
+      filter: blur(20px);
+      border-radius: 20px;
+      z-index: -1;
+    }
+
     .question {
       font-size: 1.4em;
       margin-bottom: 20px;
       font-weight: bold;
       color: #444;
     }
+
     .options {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
+
     .option {
       padding: 15px;
       border: 2px solid #ddd;
@@ -46,12 +68,14 @@
       background: #f9f9f9;
       font-size: 1.1em;
     }
+
     .option:hover {
       background: #6a11cb;
       color: #fff;
       border-color: #6a11cb;
       transform: scale(1.02);
     }
+
     .next-button {
       width: 100%;
       padding: 15px;
@@ -65,20 +89,24 @@
       transition: background 0.3s ease;
       display: none;
     }
+
     .next-button:hover {
       background: #6a11cb;
     }
+
     .timer {
       font-size: 1.5em;
       margin-bottom: 20px;
       color: #ff4757;
       font-weight: bold;
     }
+
     .score {
       font-size: 2em;
       margin-top: 20px;
       color: #2ed573;
     }
+
     .result {
       text-align: left;
       margin-top: 20px;
@@ -86,22 +114,33 @@
       overflow-y: auto;
       padding-right: 10px;
     }
+
     .result-item {
       margin-bottom: 15px;
       padding: 10px;
       border-radius: 10px;
       background: #f1f2f6;
     }
+
     .correct {
       color: #2ed573;
     }
+
     .incorrect {
       color: #ff4757;
     }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     @media (max-width: 600px) {
       .quiz-container { padding: 20px; }
       .question { font-size: 1.2em; }
@@ -135,47 +174,7 @@
       { question: "Where did the Renaissance begin?", options: ["Italy", "France", "England", "Germany"], answer: "Italy" },
       { question: "Who was known as the Maid of Orl ans?", options: ["Joan of Arc", "Cleopatra", "Queen Elizabeth I", "Marie Antoinette"], answer: "Joan of Arc" },
       { question: "In which year did man land on the moon?", options: ["1969", "1955", "1971", "1980"], answer: "1969" },
-      { question: "Which empire was ruled by Julius Caesar?", options: ["Roman Empire", "Ottoman Empire", "Persian Empire", "Macedonian Empire"], answer: "Roman Empire" },
-      { question: "Who was the first emperor of China?", options: ["Qin Shi Huang", "Mao Zedong", "Sun Yat-sen", "Kublai Khan"], answer: "Qin Shi Huang" },
-      { question: "Which war was fought between the North and South regions in the USA?", options: ["Civil War", "Revolutionary War", "Vietnam War", "Korean War"], answer: "Civil War" },
-      { question: "Who painted the Mona Lisa?", options: ["Leonardo da Vinci", "Michelangelo", "Raphael", "Donatello"], answer: "Leonardo da Vinci" },
-      { question: "In which year did World War I begin?", options: ["1914", "1918", "1939", "1900"], answer: "1914" },
-      { question: "Who was the British Prime Minister during World War II?", options: ["Winston Churchill", "Neville Chamberlain", "Margaret Thatcher", "Tony Blair"], answer: "Winston Churchill" },
-      { question: "Which empire built Machu Picchu?", options: ["Inca", "Aztec", "Mayan", "Roman"], answer: "Inca" },
-      { question: "Who discovered penicillin?", options: ["Alexander Fleming", "Marie Curie", "Isaac Newton", "Louis Pasteur"], answer: "Alexander Fleming" },
-      { question: "Which ship was sunk by a German U-boat in 1915?", options: ["Lusitania", "Titanic", "Britannic", "Queen Mary"], answer: "Lusitania" },
-      { question: "What was the name of the first successful airplane?", options: ["Wright Flyer", "Spirit of St. Louis", "Kitty Hawk", "Eagle"], answer: "Wright Flyer" },
-      { question: "Who was the last Queen of France before the Revolution?", options: ["Marie Antoinette", "Catherine de Medici", "Anne of Austria", "Eleanor of Aquitaine"], answer: "Marie Antoinette" },
-      { question: "What was the capital of the Byzantine Empire?", options: ["Constantinople", "Athens", "Rome", "Carthage"], answer: "Constantinople" },
-      { question: "Who was the first man in space?", options: ["Yuri Gagarin", "Neil Armstrong", "Buzz Aldrin", "Alan Shepard"], answer: "Yuri Gagarin" },
-      { question: "Who was known as the Iron Lady?", options: ["Margaret Thatcher", "Indira Gandhi", "Golda Meir", "Angela Merkel"], answer: "Margaret Thatcher" },
-      { question: "Which famous wall fell in 1989?", options: ["Berlin Wall", "Hadrian s Wall", "Great Wall of China", "Wailing Wall"], answer: "Berlin Wall" },
-      { question: "Who led the Indian independence movement?", options: ["Mahatma Gandhi", "Jawaharlal Nehru", "Subhas Chandra Bose", "Sardar Patel"], answer: "Mahatma Gandhi" },
-      { question: "In what year did the French Revolution begin?", options: ["1789", "1776", "1804", "1812"], answer: "1789" },
-      { question: "Which country gifted the Statue of Liberty to the USA?", options: ["France", "Britain", "Italy", "Spain"], answer: "France" },
-      { question: "Who was the first woman to fly solo across the Atlantic?", options: ["Amelia Earhart", "Bessie Coleman", "Sally Ride", "Harriet Quimby"], answer: "Amelia Earhart" },
-      { question: "Which empire was known as the 'Empire on which the sun never sets'?", options: ["British Empire", "Roman Empire", "Ottoman Empire", "Mongol Empire"], answer: "British Empire" },
-      { question: "Who discovered gravity?", options: ["Isaac Newton", "Galileo Galilei", "Albert Einstein", "Johannes Kepler"], answer: "Isaac Newton" },
-      { question: "Who wrote 'The Communist Manifesto'?", options: ["Karl Marx", "Vladimir Lenin", "Friedrich Engels", "Joseph Stalin"], answer: "Karl Marx" },
-      { question: "What ancient civilization built the pyramids?", options: ["Egyptian", "Greek", "Roman", "Mayan"], answer: "Egyptian" },
-      { question: "Which war was fought between 1939 and 1945?", options: ["World War II", "World War I", "Cold War", "Korean War"], answer: "World War II" },
-      { question: "Who invented the telephone?", options: ["Alexander Graham Bell", "Thomas Edison", "Nikola Tesla", "Samuel Morse"], answer: "Alexander Graham Bell" },
-      { question: "Who was the first Roman Emperor?", options: ["Augustus", "Julius Caesar", "Nero", "Tiberius"], answer: "Augustus" },
-      { question: "Who was assassinated in Sarajevo in 1914?", options: ["Archduke Franz Ferdinand", "Gavrilo Princip", "Kaiser Wilhelm II", "Tsar Nicholas II"], answer: "Archduke Franz Ferdinand" },
-      { question: "Who was the first human to set foot on the moon?", options: ["Neil Armstrong", "Buzz Aldrin", "Michael Collins", "Yuri Gagarin"], answer: "Neil Armstrong" },
-      { question: "Which civilization invented writing?", options: ["Sumerians", "Romans", "Greeks", "Egyptians"], answer: "Sumerians" },
-      { question: "Who was the leader of Nazi Germany?", options: ["Adolf Hitler", "Joseph Stalin", "Benito Mussolini", "Hirohito"], answer: "Adolf Hitler" },
-      { question: "What was the name of the ship on which the Pilgrims sailed to America?", options: ["Mayflower", "Santa Maria", "Endeavour", "Discovery"], answer: "Mayflower" },
-      { question: "What empire did Genghis Khan found?", options: ["Mongol Empire", "Ottoman Empire", "Chinese Empire", "Russian Empire"], answer: "Mongol Empire" },
-      { question: "Who was the first female Prime Minister of the UK?", options: ["Margaret Thatcher", "Theresa May", "Queen Victoria", "Elizabeth I"], answer: "Margaret Thatcher" },
-      { question: "Which US president abolished slavery?", options: ["Abraham Lincoln", "George Washington", "Theodore Roosevelt", "Andrew Jackson"], answer: "Abraham Lincoln" },
-      { question: "What city was divided by a wall from 1961 to 1989?", options: ["Berlin", "Moscow", "Warsaw", "Prague"], answer: "Berlin" },
-      { question: "Who discovered electricity?", options: ["Benjamin Franklin", "Thomas Edison", "Nikola Tesla", "Michael Faraday"], answer: "Benjamin Franklin" },
-      { question: "Who led the Soviet Union during World War II?", options: ["Joseph Stalin", "Vladimir Lenin", "Mikhail Gorbachev", "Leon Trotsky"], answer: "Joseph Stalin" },
-      { question: "What was the capital of ancient Egypt?", options: ["Memphis", "Cairo", "Alexandria", "Thebes"], answer: "Memphis" },
-      { question: "Who was the first person to sail around the world?", options: ["Ferdinand Magellan", "Christopher Columbus", "Vasco da Gama", "James Cook"], answer: "Ferdinand Magellan" },
-      { question: "What was the name of the ancient trade route between China and Europe?", options: ["Silk Road", "Spice Route", "Amber Road", "Salt Route"], answer: "Silk Road" },
-      { question: "Who was the first Pharaoh of Egypt?", options: ["Narmer", "Tutankhamun", "Ramses II", "Cleopatra"], answer: "Narmer" }
+      { question: "Which empire was ruled by Julius Caesar?", options: ["Roman Empire", "Ottoman Empire", "Persian Empire", "Macedonian Empire"], answer: "Roman Empire" }
     ];
 
     let currentQuestionIndex = 0;
@@ -232,7 +231,7 @@
       optionsElement.style.display = 'none';
       nextButton.style.display = 'none';
       resultContainer.style.display = 'block';
-      scoreElement.textContent = Your Score: ${score}/${userAnswers.length};
+      scoreElement.textContent = `Your Score: ${score}/${userAnswers.length}`;
       resultElement.innerHTML = userAnswers.map((answer, index) => `
         <div class="result-item">
           <strong>Question ${index + 1}:</strong> ${answer.question}<br>
@@ -245,7 +244,7 @@
     function startTimer() {
       timer = setInterval(() => {
         timeLeft--;
-        timerElement.textContent = Time Left: ${timeLeft}s;
+        timerElement.textContent = `Time Left: ${timeLeft}s`;
         if (timeLeft <= 0) {
           clearInterval(timer);
           endQuiz();
