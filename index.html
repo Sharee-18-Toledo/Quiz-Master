@@ -32,7 +32,6 @@
       z-index: 1;
     }
 
-    /* Soft glowing aura around the quiz box */
     .quiz-container::before {
       content: "";
       position: absolute;
@@ -76,7 +75,7 @@
       transform: scale(1.02);
     }
 
-    .next-button {
+    .next-button, .restart-button {
       width: 100%;
       padding: 15px;
       margin-top: 20px;
@@ -90,7 +89,7 @@
       display: none;
     }
 
-    .next-button:hover {
+    .next-button:hover, .restart-button:hover {
       background: #6a11cb;
     }
 
@@ -145,7 +144,7 @@
       .quiz-container { padding: 20px; }
       .question { font-size: 1.2em; }
       .option { font-size: 1em; }
-      .next-button { font-size: 1em; }
+      .next-button, .restart-button { font-size: 1em; }
     }
   </style>
 </head>
@@ -160,6 +159,7 @@
     <div id="result-container" class="result-container" style="display: none;">
       <div id="score" class="score"></div>
       <div id="result" class="result"></div>
+      <button id="restart-button" class="restart-button">Restart Quiz</button>
     </div>
   </div>
 
@@ -172,17 +172,17 @@
       { question: "In which city was the Titanic built?", options: ["Belfast", "London", "New York", "Liverpool"], answer: "Belfast" },
       { question: "Who wrote the Declaration of Independence?", options: ["Thomas Jefferson", "John Adams", "James Madison", "Benjamin Franklin"], answer: "Thomas Jefferson" },
       { question: "Where did the Renaissance begin?", options: ["Italy", "France", "England", "Germany"], answer: "Italy" },
-      { question: "Who was known as the Maid of Orl ans?", options: ["Joan of Arc", "Cleopatra", "Queen Elizabeth I", "Marie Antoinette"], answer: "Joan of Arc" },
+      { question: "Who was known as the Maid of Orleans?", options: ["Joan of Arc", "Cleopatra", "Queen Elizabeth I", "Marie Antoinette"], answer: "Joan of Arc" },
       { question: "In which year did man land on the moon?", options: ["1969", "1955", "1971", "1980"], answer: "1969" },
       { question: "Which empire was ruled by Julius Caesar?", options: ["Roman Empire", "Ottoman Empire", "Persian Empire", "Macedonian Empire"], answer: "Roman Empire" }
     ];
 
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let timeLeft = 60;
+    let currentQuestionIndex;
+    let score;
+    let timeLeft;
     let timer;
-    const selectedQuestions = getRandomQuestions(questions, 10);
-    const userAnswers = [];
+    let selectedQuestions;
+    let userAnswers;
 
     const timerElement = document.getElementById('timer');
     const questionElement = document.getElementById('question');
@@ -191,6 +191,7 @@
     const resultContainer = document.getElementById('result-container');
     const scoreElement = document.getElementById('score');
     const resultElement = document.getElementById('result');
+    const restartButton = document.getElementById('restart-button');
 
     function getRandomQuestions(questions, count) {
       const shuffled = questions.sort(() => 0.5 - Math.random());
@@ -239,6 +240,7 @@
           <span class="correct">Correct Answer: ${answer.correct}</span>
         </div>
       `).join('');
+      restartButton.style.display = 'block';
     }
 
     function startTimer() {
@@ -252,6 +254,26 @@
       }, 1000);
     }
 
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      timeLeft = 60;
+      userAnswers = [];
+      selectedQuestions = getRandomQuestions(questions, 10);
+
+      resultContainer.style.display = 'none';
+      questionElement.style.display = 'block';
+      optionsElement.style.display = 'block';
+      nextButton.style.display = 'none';
+      restartButton.style.display = 'none';
+      timerElement.style.display = 'block';
+
+      timerElement.textContent = `Time Left: ${timeLeft}s`;
+      displayQuestion();
+      clearInterval(timer);
+      startTimer();
+    }
+
     nextButton.addEventListener('click', () => {
       currentQuestionIndex++;
       if (currentQuestionIndex < selectedQuestions.length) {
@@ -262,9 +284,13 @@
       }
     });
 
-    displayQuestion();
-    startTimer();
+    restartButton.addEventListener('click', restartQuiz);
+
+    function restartQuiz() {
+      startQuiz();
+    }
+
+    startQuiz();
   </script>
 </body>
 </html>
-
