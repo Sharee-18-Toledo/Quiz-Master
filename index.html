@@ -75,7 +75,8 @@
       transform: scale(1.02);
     }
 
-    .next-button, .restart-button {
+    .next-button,
+    .restart-button {
       width: 100%;
       padding: 15px;
       margin-top: 20px;
@@ -85,15 +86,13 @@
       border-radius: 10px;
       font-size: 1.2em;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
+      transition: background 0.3s ease;
       display: none;
-      opacity: 0;
-      animation: fadeInButton 0.8s forwards;
     }
 
-    .next-button:hover, .restart-button:hover {
+    .next-button:hover,
+    .restart-button:hover {
       background: #6a11cb;
-      transform: scale(1.03);
     }
 
     .timer {
@@ -107,7 +106,6 @@
       font-size: 2em;
       margin-top: 20px;
       color: #2ed573;
-      animation: fadeIn 1.2s ease;
     }
 
     .result {
@@ -136,11 +134,6 @@
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeInButton {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
     }
 
     @keyframes gradientShift {
@@ -172,9 +165,6 @@
     </div>
   </div>
 
-  <!-- ✅ Add subtle click sound -->
-  <audio id="click-sound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
-
   <script>
     const questions = [
       { question: "Who was the first President of the United States?", options: ["George Washington", "Abraham Lincoln", "John Adams", "Thomas Jefferson"], answer: "George Washington" },
@@ -189,12 +179,12 @@
       { question: "Which empire was ruled by Julius Caesar?", options: ["Roman Empire", "Ottoman Empire", "Persian Empire", "Macedonian Empire"], answer: "Roman Empire" }
     ];
 
-    let currentQuestionIndex;
-    let score;
-    let timeLeft;
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timeLeft = 60;
     let timer;
-    let selectedQuestions;
-    let userAnswers;
+    let userAnswers = [];
+    let selectedQuestions = [];
 
     const timerElement = document.getElementById('timer');
     const questionElement = document.getElementById('question');
@@ -204,30 +194,26 @@
     const scoreElement = document.getElementById('score');
     const resultElement = document.getElementById('result');
     const restartButton = document.getElementById('restart-button');
-    const clickSound = document.getElementById('click-sound');
 
-    function playClickSound() {
-      clickSound.currentTime = 0;
-      clickSound.play();
+    function shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
     }
 
     function getRandomQuestions(questions, count) {
-      const shuffled = questions.sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, count);
+      return shuffleArray([...questions]).slice(0, count);
     }
 
     function displayQuestion() {
       const question = selectedQuestions[currentQuestionIndex];
       questionElement.textContent = question.question;
       optionsElement.innerHTML = '';
-      question.options.forEach(option => {
+
+      const shuffledOptions = shuffleArray([...question.options]);
+      shuffledOptions.forEach(option => {
         const button = document.createElement('div');
         button.textContent = option;
         button.classList.add('option');
-        button.addEventListener('click', () => {
-          playClickSound();
-          selectAnswer(option, question.answer);
-        });
+        button.addEventListener('click', () => selectAnswer(option, question.answer));
         optionsElement.appendChild(button);
       });
     }
@@ -238,21 +224,18 @@
         option.style.pointerEvents = 'none';
         if (option.textContent === correct) {
           option.style.backgroundColor = '#2ed573';
-        } else if (option.textContent === selected) {
+        } else if (option.textContent === selected && selected !== correct) {
           option.style.backgroundColor = '#ff4757';
         }
       });
       if (selected === correct) score++;
       userAnswers.push({ question: selectedQuestions[currentQuestionIndex].question, selected, correct });
       nextButton.style.display = 'block';
-      nextButton.style.animation = 'fadeInButton 0.8s forwards';
     }
 
     function endQuiz() {
       clearInterval(timer);
-      questionElement.style.display = 'none';
-      optionsElement.style.display = 'none';
-      nextButton.style.display = 'none';
+      document.getElementById('question-container').style.display = 'none';
       resultContainer.style.display = 'block';
       scoreElement.textContent = `Your Score: ${score}/${userAnswers.length}`;
       resultElement.innerHTML = userAnswers.map((answer, index) => `
@@ -263,10 +246,12 @@
         </div>
       `).join('');
       restartButton.style.display = 'block';
-      restartButton.style.animation = 'fadeInButton 1s forwards';
     }
 
     function startTimer() {
+      clearInterval(timer);
+      timeLeft = 60;
+      timerElement.textContent = `Time Left: ${timeLeft}s`;
       timer = setInterval(() => {
         timeLeft--;
         timerElement.textContent = `Time Left: ${timeLeft}s`;
@@ -280,25 +265,17 @@
     function startQuiz() {
       currentQuestionIndex = 0;
       score = 0;
-      timeLeft = 60;
       userAnswers = [];
       selectedQuestions = getRandomQuestions(questions, 10);
-
+      document.getElementById('question-container').style.display = 'block';
       resultContainer.style.display = 'none';
-      questionElement.style.display = 'block';
-      optionsElement.style.display = 'block';
       nextButton.style.display = 'none';
       restartButton.style.display = 'none';
-      timerElement.style.display = 'block';
-
-      timerElement.textContent = `Time Left: ${timeLeft}s`;
       displayQuestion();
-      clearInterval(timer);
       startTimer();
     }
 
     nextButton.addEventListener('click', () => {
-      playClickSound();
       currentQuestionIndex++;
       if (currentQuestionIndex < selectedQuestions.length) {
         displayQuestion();
@@ -308,14 +285,7 @@
       }
     });
 
-    restartButton.addEventListener('click', () => {
-      playClickSound();
-      restartQuiz();
-    });
-
-    function restartQuiz() {
-      startQuiz();
-    }
+    restartButton.addEventListener('click', startQuiz);
 
     startQuiz();
   </script>
